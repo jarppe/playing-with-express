@@ -7,10 +7,13 @@
     "start": "node src/app.js"
   },
   "dependencies": {
+    "body-parser": "^1.18.2",
     "express": "^4.16.3",
     "express-promise-router": "^3.0.1",
+    "morgan": "^1.9.0",
     "npm": "^5.7.1",
-    "pg": "^7.4.1"
+    "pg": "^7.4.1",
+    "serve-static": "^1.13.2"
   },
   "engines": {
     "node": "9.9.0"
