@@ -5,28 +5,27 @@ const router = new Router()
 module.exports = router
 
 router.get("/", async (req, res) => {
-  const { rows } = await db.query("select * from messages")
-  res.send(rows)
+  res.send(await db.many("select * from messages"))
 })
 
 router.get("/:id", async (req, res) => {
-  const { rows } = await db.query("select * from messages where id = $1", [req.params.id])
-  if (rows.length > 0) {
-    res.send(rows[0])
-  } else {
-    res.status(404).send({error: "can't find message with id " + req.params.id})
-  }
+  db.one("select * from messages where id = $1", req.params.id)
+    .then(r => res.send(r))
+    .catch(e => res.status(404).send({error: "Not found"}))
 })
 
 router.post("/", async (req, res) => {
-  const { message } = req.body
+  const {message} = req.body
   if (message) {
-    db.execute("insert into messages (message) values ($1) returning id", [message], (response) => {
-      res.send({
-        id: response.rows[0].id,
+    db.one("insert into messages (message) values ($1) returning id", message)
+      .then(r => res.send({
+        id: r.id,
         message: message
+      }))
+      .catch(e => {
+        console.error("insert failed", e)
+        res.status(500).send({error: "Oh no"})
       })
-    })
   } else {
     res.status(400).send({error: "The 'message' is required"})
   }
