@@ -2,5 +2,9 @@
 set -e
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
-    GRANT ALL PRIVILEGES ON DATABASE hello TO $POSTGRES_USER;
+    grant all privileges on database hello to $POSTGRES_USER;
+    create table if not exists messages (
+      id serial primary key,
+      message text
+    );
 EOSQL
